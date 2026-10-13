@@ -1,0 +1,41 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main, master ]
+    # Only trigger if files outside the frontend folder change
+    paths-ignore:
+      - 'frontend/**'
+      - 'README.md'
+  pull_request:
+    branches: [ main, master ]
+    paths-ignore:
+      - 'frontend/**'
+      - 'README.md'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # Change to your preferred Node version
+        cache: 'npm'
+        # Point cache to the root package-lock.json
+        cache-dependency-path: package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run Linting (Optional)
+      # Uncomment if you add a lint script to your root package.json
+      # run: npm run lint 
+
+    - name: Run Tests
+      # This will run whatever test script you have defined in your root package.json
+      run: npm test
